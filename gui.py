@@ -1,9 +1,10 @@
 from tkinter import Tk, Text, Scrollbar
 from tkinter import ttk
 import pyperclip
+from tkinter import simpledialog
 from g4f.client import Client
-# from tkinter import simpledialog
-font = "Times New Roman"
+from tkinter import Menu
+
 
 
 class MyButton:
@@ -21,8 +22,6 @@ class MyButton:
             width=width
         )
         return button
-
-
 class Functionality:
     def __init__(self, editor, entry):
         self.editor = editor
@@ -48,7 +47,7 @@ class Functionality:
         query = self.entry.get("1.0", "end-1c")
         self.entry.delete("1.0", "end")
 
-        self.editor.insert("end", "Пользователь: " + query + "\n", "user")
+        self.editor.insert("end", "Пользователь: "+ "\n" + query + "\n", "user")
         self.editor.see("end")
 
         client = Client()
@@ -59,7 +58,7 @@ class Functionality:
         response_text = response.choices[0].message.content
 
         # Display bot's response in the editor
-        self.editor.insert("end", "Бот: " + response_text + "\n", "bot")
+        self.editor.insert("end", "Бот: " + "\n" + response_text + "\n", "bot")
         self.editor.see("end")
 
 
@@ -97,7 +96,7 @@ class ChatTab:
         entry_frame.grid(column=0, row=2, sticky="EW")
 
         entry = Text(entry_frame, wrap="word", height=2, font=(font, 16), bg="black", fg="white", insertbackground="white")
-        entry.insert("1.0", "Отвечай на русском...")
+
         entry.grid(column=0, row=0, sticky="EW")
 
         # Add scrollbars to the entry widget
@@ -108,9 +107,8 @@ class ChatTab:
         self.functionality = Functionality(editor, entry)
         entry.bind("<Key>", self.functionality.on_text_change)
 
-        my_button = MyButton(color='black', font='Times New Roman', size=16)
+        my_button = MyButton(color='black', font=font, size=16)
 
-        # Создаем стиль для кнопки
         style = ttk.Style()
         style.configure('my.TButton', foreground=my_button.color, background=my_button.color,
                         font=(my_button.font, my_button.size, 'bold'))
@@ -134,11 +132,10 @@ class ChatTab:
         index = self.notebook.index(self.frame)
         self.notebook.tab(index, text=new_name)
 
+font = "Times New Roman"
 root = Tk()
 root.title("Directed by NyaDesuKa")
 root.iconbitmap('gachi.ico')
-
-# Настройка геометрии главного окна так, чтобы оно расширялось, заполняя всё доступное пространство
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
 
@@ -146,10 +143,28 @@ notebook = ttk.Notebook(root)
 notebook.grid(column=0, row=0, sticky="NSEW")
 
 initial_chat = ChatTab(notebook)
+
+menu_bar = Menu(root)
+root.config(menu=menu_bar)
+tab_menu = Menu(menu_bar, tearoff=0)
+menu_bar.add_cascade(label="Меню", menu=tab_menu)
+
+def rename_tab(chat_tab):
+    new_name = simpledialog.askstring("Переименовать вкладку", "Введите новое имя для вкладки:")
+    if new_name:
+        chat_tab.rename_chat(new_name)
+
+def add_tab_menu(tab):
+    tab_menu.add_command(label=f"Переименовать {tab.notebook.tab(tab.frame, 'text')}", command=lambda: rename_tab(tab))
+
+add_tab_menu(initial_chat)
+
+
 def create_new_chat_tab():
     new_chat = ChatTab(notebook)
+    add_tab_menu(new_chat)
 
-my_button = MyButton(color='black', font='Times New Roman', size=16)
+my_button = MyButton(color='black', font=font, size=16)
 style = ttk.Style()
 style.configure('my.TButton', foreground=my_button.color, background=my_button.color,
                 font=(my_button.font, my_button.size, 'bold'))
