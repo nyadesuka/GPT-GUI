@@ -4,9 +4,10 @@ import pyperclip
 from tkinter import simpledialog
 from g4f.client import Client
 from tkinter import Menu
+import logging
 
-
-
+logging.basicConfig(format="%(asctime)s %(levelname)s:%(message)s", level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 class MyButton:
     def __init__(self, color, font, size):
         self.color = color
@@ -47,7 +48,7 @@ class Functionality:
         query = self.entry.get("1.0", "end-1c")
         self.entry.delete("1.0", "end")
 
-        self.editor.insert("end", "Пользователь: "+ "\n" + query + "\n", "user")
+        self.editor.insert("end", "Пользователь: " + query + "\n", "user")
         self.editor.see("end")
 
         client = Client()
@@ -57,8 +58,8 @@ class Functionality:
         )
         response_text = response.choices[0].message.content
 
-        # Display bot's response in the editor
-        self.editor.insert("end", "Бот: " + "\n" + response_text + "\n", "bot")
+
+        self.editor.insert("end", "Бот: " + response_text + "\n", "bot")
         self.editor.see("end")
 
 
@@ -132,9 +133,9 @@ class ChatTab:
         index = self.notebook.index(self.frame)
         self.notebook.tab(index, text=new_name)
 
-font = "Comic Sans"
+font = "Times New Roman"
 root = Tk()
-root.title("Directed by NyaDesuKa (and the Circus)")
+root.title("Directed by NyaDesuKa (and the Circus.team)")
 root.iconbitmap('gachi.ico')
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
