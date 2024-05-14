@@ -132,9 +132,9 @@ class ChatTab:
         index = self.notebook.index(self.frame)
         self.notebook.tab(index, text=new_name)
 
-font = "Times New Roman"
+font = "Comic Sans"
 root = Tk()
-root.title("Directed by NyaDesuKa")
+root.title("Directed by NyaDesuKa (and the Circus)")
 root.iconbitmap('gachi.ico')
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
