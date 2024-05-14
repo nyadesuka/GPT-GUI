@@ -1,0 +1,29 @@
+# Виртуальное окружение
+venv/
+/Drafts/Neural network/path/
+
+# Импортированные пакеты
+*.pyc
+__pycache__/
+.cmd
+# Отчеты о покрытии кода
+htmlcov/
+
+# Тестовые данные и временные файлы
+*.pyo
+*.pyc
+*.pyd
+__pycache__/
+
+# Локальные настройки PyCharm
+.idea/
+
+# Файл настроек для окружения
+.env
+
+# Логи и временные файлы
+*.log
+*.sqlite
+*.swp
+*.swo
+*.pytest_cache/
