@@ -1,10 +1,20 @@
 from tkinter import Tk, Text, Scrollbar
 from tkinter import ttk
+import g4f.models
 import pyperclip
 from tkinter import simpledialog
 from g4f.client import Client
 from tkinter import Menu
 import logging
+# from g4f.Provider import Blackbox, OpenaiChat
+
+
+#Сделать более аккуратное оформление проекта
+#Сделать функцию переименования более корректной
+# Сделать возможность закрывать вкладки
+# Сделать интерфейс более приятным
+# Оптимизировать чаты и работу приложения
+
 
 logging.basicConfig(format="%(asctime)s %(levelname)s:%(message)s", level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -55,6 +65,7 @@ class Functionality:
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": f"{query}"}]
+            # provider=Blackbox
         )
         response_text = response.choices[0].message.content
 

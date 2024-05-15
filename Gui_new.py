@@ -73,39 +73,48 @@ class ChatTab:
 
     def create_chat_tab(self):
         self.frame = ttk.Frame(self.notebook)
-        self.notebook.add(self.frame, text="FurryPorn" + str(self.notebook.index("end") + 1))
+        self.notebook.add(self.frame, text="LoliChat" + str(self.notebook.index("end") + 1))
+
+        # Configure the grid layout for the main frame
+        self.frame.columnconfigure(0, weight=1)
+        self.frame.rowconfigure(0, weight=3)  # More weight to editor area
+        self.frame.rowconfigure(2, weight=1)  # Less weight to entry area
 
         self.editor = tk.Text(self.frame, wrap="word", bg="black", fg="white", font=self.get_font())
         self.editor.grid(column=0, row=0, sticky="NSEW")
 
-        ys = tk.Scrollbar(self.frame, orient="vertical", command=self.editor.yview)
-        ys.grid(column=1, row=0, sticky="NS")
-        xs = tk.Scrollbar(self.frame, orient="horizontal", command=self.editor.xview)
-        xs.grid(column=0, row=1, sticky="EW")
+        ys_editor = tk.Scrollbar(self.frame, orient="vertical", command=self.editor.yview)
+        ys_editor.grid(column=1, row=0, sticky="NS")
+        xs_editor = tk.Scrollbar(self.frame, orient="horizontal", command=self.editor.xview)
+        xs_editor.grid(column=0, row=1, sticky="EW")
 
-        self.editor["yscrollcommand"] = ys.set
-        self.editor["xscrollcommand"] = xs.set
+        self.editor["yscrollcommand"] = ys_editor.set
+        self.editor["xscrollcommand"] = xs_editor.set
 
         entry_frame = ttk.Frame(self.frame)
         entry_frame.grid(column=0, row=2, sticky="EW")
 
-        self.entry = tk.Text(entry_frame, wrap="word", bg="black", fg="white", font=self.get_font())
+        # Configure the grid layout for the entry frame
+        entry_frame.columnconfigure(0, weight=1)
+        entry_frame.rowconfigure(0, weight=1)
+
+        self.entry = tk.Text(entry_frame, wrap="word", bg="black", fg="white", font=self.get_font(), height=5)
         self.entry.grid(column=0, row=0, sticky="NSEW")
 
-        ys = tk.Scrollbar(entry_frame, orient="vertical", command=self.entry.yview)
-        ys.grid(column=1, row=0, sticky="NS")
-        xs = tk.Scrollbar(entry_frame, orient="horizontal", command=self.entry.xview)
-        xs.grid(column=0, row=1, sticky="EW")
+        ys_entry = tk.Scrollbar(entry_frame, orient="vertical", command=self.entry.yview)
+        ys_entry.grid(column=1, row=0, sticky="NS")
+        xs_entry = tk.Scrollbar(entry_frame, orient="horizontal", command=self.entry.xview)
+        xs_entry.grid(column=0, row=1, sticky="EW")
 
-        self.entry["yscrollcommand"] = ys.set
-        self.entry["xscrollcommand"] = xs.set
+        self.entry["yscrollcommand"] = ys_entry.set
+        self.entry["xscrollcommand"] = xs_entry.set
 
         send_button = MyButton(None, None, None).create_button(self.frame, "Отправить", self.send_message, "TButton")
         send_button.grid(column=0, row=3, sticky="EW")
 
         self.functionality = Functionality(self.editor, self.entry)
 
-        self.entry.bind("<Return>", self.functionality.send_message)
+        self.entry.bind("<Shift-Return>", self.functionality.send_message)
         self.entry.bind("<Control-v>", self.functionality.paste_text_entry)
         self.editor.bind("<Control-v>", self.functionality.paste_text_editor)
         self.entry.bind("<Control-y>", lambda event: self.editor.insert("end", self.editor.get("1.0", "end-1c")))
@@ -132,6 +141,7 @@ class ChatTab:
 
         self.editor.insert("end", "Бот: " + response_text + "\n", "bot")
         self.editor.see("end")
+
         self.editor.tag_config("user", foreground="white", font=self.get_font())
         self.editor.tag_config("bot", foreground="#16C60C", font=self.get_font())
 
