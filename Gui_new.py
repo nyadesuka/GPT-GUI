@@ -1,3 +1,4 @@
+import time
 import tkinter as tk
 import tkinter.font as tkFont
 from tkinter import ttk
@@ -7,6 +8,7 @@ from tkinter import simpledialog
 from g4f.client import Client
 from tkinter import Menu
 import logging
+import threading
 
 logging.basicConfig(format="%(asctime)s %(levelname)s:%(message)s", level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -37,7 +39,6 @@ class Functionality:
         if lines <= 6:
             self.entry.config(height=lines)
         else:
-            # Limiting the scrollbar to scroll only up to 4 lines down
             self.entry.yview_scroll(lines - 4, "units")
 
     def paste_text_entry(self, event):
@@ -55,11 +56,13 @@ class Functionality:
         self.editor.insert("end", "Пользователь: " + query + "\n", "user")
         self.editor.see("end")
 
+        threading.Thread(target=self.get_response, args=(query,)).start()
+
+    def get_response(self, query):
         client = Client()
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": f"{query}"}]
-            # provider=Blackbox
         )
         response_text = response.choices[0].message.content
 
@@ -75,10 +78,9 @@ class ChatTab:
         self.frame = ttk.Frame(self.notebook)
         self.notebook.add(self.frame, text="LoliChat" + str(self.notebook.index("end") + 1))
 
-        # Configure the grid layout for the main frame
         self.frame.columnconfigure(0, weight=1)
-        self.frame.rowconfigure(0, weight=3)  # More weight to editor area
-        self.frame.rowconfigure(2, weight=1)  # Less weight to entry area
+        self.frame.rowconfigure(0, weight=3)
+        self.frame.rowconfigure(2, weight=1)
 
         self.editor = tk.Text(self.frame, wrap="word", bg="black", fg="white", font=self.get_font())
         self.editor.grid(column=0, row=0, sticky="NSEW")
@@ -94,7 +96,6 @@ class ChatTab:
         entry_frame = ttk.Frame(self.frame)
         entry_frame.grid(column=0, row=2, sticky="EW")
 
-        # Configure the grid layout for the entry frame
         entry_frame.columnconfigure(0, weight=1)
         entry_frame.rowconfigure(0, weight=1)
 
@@ -131,22 +132,26 @@ class ChatTab:
         self.editor.insert("end", "Пользователь: " + query + "\n", "user")
         self.editor.see("end")
 
+        threading.Thread(target=self.get_response, args=(query,)).start()
+
+    def get_response(self, query):
         client = Client()
+        time_1 = time.time()
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": f"{query}"}]
-            # provider=Blackbox
         )
         response_text = response.choices[0].message.content
+        time_2 = time.time()
+        timer = time_2 - time_1
 
-        self.editor.insert("end", "Бот: " + response_text + "\n", "bot")
+        self.editor.insert("end", "Бот: " + response_text +"\n" + str(timer)+ "\n", "bot")
         self.editor.see("end")
 
         self.editor.tag_config("user", foreground="white", font=self.get_font())
         self.editor.tag_config("bot", foreground="#16C60C", font=self.get_font())
 
-
-class FurryPornApp:
+class App:
     def __init__(self, root: tk.Tk):
         self.root = root
         self.root.title("Directed by NyaDesuKa")
@@ -219,7 +224,7 @@ class FurryPornApp:
 
 def main():
     root = tk.Tk()
-    FurryPornApp(root)
+    App(root)
     root.mainloop()
 
 if __name__ == "__main__":
